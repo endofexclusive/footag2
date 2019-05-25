@@ -1,2 +1,101 @@
-= Footag 2
+About
+=====
+
+Footag2 is a library for creating interactive PCB generators.
+
+
+Features
+--------
+
+- SMD footprints calculated in line with IPC-7351B.
+- Through-hole footprints calculated in line with IPC-7251 draft 1.
+- Designed as a self-standing library for use in interactive applications.
+  - Useful for creating footprint wizards
+- Application requires no knowledge about component parameters.
+  - only needs to know how to show and manipulate typed parameters provided by
+    the library.
+
+
+Quick start
+===========
+
+  $ cd examples/
+  $ make
+  $ ./ex | more
+
+
+Motivation
+==========
+
+*Footag2* tries to answer the following needs:
+- Output format useful for EDA tool, canvas or library file
+- User (application) does not need to know anything about component parameters
+- Implementation of relevant standards
+- Simple to customize library parameters, such as fabrication tolerances and
+  artwork line width.
+- Extendable with new component families and output formats
+- Source code available (to judge footprint quality)
+- Separation between component parameters, fabrication tolerances, project
+  policy, artistic preferences, etc.
+
+
+Software requirements
+=====================
+
+A C99 compiler and GNU Make is required to compile the software.
+
+Library requirements: none
+
+
+Usage
+=====
+
+The public interface is available in include/footag/footag.h. See also
+examples/ex.c for examples on how the data structures can be used.
+
+Typical call sequence is this:
+- footag_open() to create a context for a specific component type.
+- footag_get_param() to retrieve all user settable parameters, including
+  constraints, for the component.
+- let the user manipulate the parameters.
+- footag_get_spec() to generate the footprint
+- parse the struct footag_spec returned by footag_get_spec() generate/show the
+  footprint in a way appropriate for the application.
+
+The data type struct footag_spec contains pads, pad timensions, body and
+courtyard as calculated by the library.
+
+
+footag_get_typeinfo()
+---------------------
+Retrieve information about the different component types supported. Useful for
+listing in a user interface.
+
+
+Adding new component types
+==========================
+
+To add a new component type:
+- include/footag/footag.h: add your new type to enum footag_type.
+- src/wiz.c: add a new entry to the array named theop.
+- Makefile: add your implementation file to the LIBSRC variable
+
+Implementation:
+- Create the template using PARAM_ function macros.
+- Parse user parameters with GETID().
+- There are lots of helpers in src/wiz.c for common calculations.
+
+
+See also
+========
+
+Previous version of this project with different goals, including the feature to
+generate output in popular footprint formats:
+[footag](https://github.com/endofexclusive/footag).
+
+*Mentor Graphics* has published an excellent article series on the topic of PCB
+footprint libraries:
+[*"PCB Design Perfection Starts in the CAD Library"*](https://www.innofour.com/3783/news/literature/pcb-design-perfection-starts-in-the-cad-library/pcb-design-perfection-starts-in-the-cad-library-part-1).
+
+[QEDA tool](https://github.com/qeda/qeda).
 
